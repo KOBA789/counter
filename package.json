@@ -1,0 +1,23 @@
+{
+  "author": "KOBA789 <kobahide789@gmail.com> (http://koba789.com/)",
+  "name": "counter",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/KOBA789/src.git"
+  },
+  "engines": {
+    "node": "~0.6.10"
+  },
+  "dependencies": {
+    "node-uuid": "*",
+    "socket.io": "0.9",
+    "redis": "*",
+    "hiredis": "*",
+    "router-line": "*",
+    "cookie-line": "*",
+    "hogan.js": ""
+  },
+  "devDependencies": {},
+  "optionalDependencies": {}
+}
