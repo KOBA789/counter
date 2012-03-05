@@ -30,7 +30,7 @@
   </textarea>
 </p>
 <script>
-  var socket = io.connect(9861);
+  var socket = io.connect();
   var count = {{counterValue}};
   socket.on('inc', function () {
     count ++;
