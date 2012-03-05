@@ -3,30 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <title>管理画面 - かうんたー</title>
+<script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-<h1>かうんたー</h1>
-<p>
-ブクマしておくとよい(このページ): <a href="http://counter.koba789.com/manage/{{rawId}}">管理画面</a><br>
-このURLはバレないようにするべし。
+  <h1>かうんたー</h1>
+  <p>
+    ブクマしておくとよい(このページ): <a href="http://counter.koba789.com/manage/{{rawId}}">管理画面</a><br>
+    このURLはバレないようにするべし。
+  </p>
+  <h2>現在のカウント数</h2>
+  <p id="counter">{{counterValue}}</p>
+  <h2>貼りつけ用タグ</h2>
+  <h3>かうんたー公開版</h3>
+  <textarea cols="60" rows="4">
+    <script type="text/javascript">
+      document.write('<span id="{{publicId}}">...</span>');
+      function cb{{publicId}}(json) {
+      document.getElementById('{{publicId}}').innerText = json.value;
+      }
+    </script>
+    <script type="text/javascript" src="http://counter.koba789.com/normal/{{publicId}}?callback=cb{{publicId}}"></script>
+  </textarea>
+  <h3>かうんたー非公開版</h3>
+  <textarea cols="60" rows="4">
+    <script type="text/javascript" src="http://counter.koba789.com/hidden/{{hiddenId}}"></script>
+  </textarea>
 </p>
-<h2>現在のカウント数</h2>
-<p>{{counterValue}}</p>
-<h2>貼りつけ用タグ</h2>
-<h3>かうんたー公開版</h3>
-<textarea cols="60" rows="4">
-<script type="text/javascript">
-document.write('<span id="{{publicId}}">...</span>');
-function cb{{publicId}}(json) {
-  document.getElementById('{{publicId}}').innerText = json.value;
-}
+<script>
+  var socket = io.connect();
+  var count = {{counterValue}};
+  socket.on('inc', function () {
+    count ++;
+    document.getElementById('counter').innerText = count;
+  });
+  socket.emit('select', '{{rawId}}');
 </script>
-<script type="text/javascript" src="http://counter.koba789.com/normal/{{publicId}}?callback=cb{{publicId}}"></script>
-</textarea>
-<h3>かうんたー非公開版</h3>
-<textarea cols="60" rows="4">
-<script type="text/javascript" src="http://counter.koba789.com/hidden/{{hiddenId}}"></script>
-</textarea>
-</p>
 </body>
 </html>

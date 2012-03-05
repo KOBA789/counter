@@ -1,7 +1,8 @@
 var http = require('http'),
     fs = require('fs'),
     url = require('url'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    EventEmitter = require('events').EventEmitter;
 
 var router = new (require('router-line').Router);
 var cookie = require('cookie-line');
@@ -21,6 +22,8 @@ files.manage = fs.readFileSync('./public/manage.html', 'utf-8');
 var templates = {};
 // templates.index = hogan.compile(files.index);
 templates.manage = hogan.compile(files.manage);
+
+var junction = new EventEmitter();
 
 function getHash(str, key) {
   var hmac = crypto.createHmac('sha1', key);
@@ -198,6 +201,7 @@ function countUp(hiddenId, isAlready, callback) {
         return;
       }
 
+      junction.emit(hiddenId, 'inc');
       callback(null, counterValue2);
     });
   });
@@ -305,3 +309,27 @@ var app = http.createServer(function (req, res) {
 });
 
 app.listen(9861);
+
+var io = require('socket.io').listen(app);
+
+io.sockets.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+  socket.on('select', function (channel) {
+    if (!validRawId(channel)) {
+      return;
+    }
+
+    var hiddenId = getHiddenId(getPublicId(channel));
+
+    junction.on(hiddenId, function (command) {
+      if (typeof command !== 'string') {
+        return;
+      }
+      switch (command) {
+      case 'inc':
+        socket.emit('inc');
+        break;
+      }
+    });
+  });
+});
