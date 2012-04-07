@@ -308,7 +308,7 @@ var app = http.createServer(function (req, res) {
   result.value.call(handler);
 });
 
-app.listen(9861);
+app.listen(process.env.PORT || 80);
 
 var io = require('socket.io').listen(app);
 
